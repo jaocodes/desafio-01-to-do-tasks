@@ -22,6 +22,17 @@ export const routes = [
             const {title, description} = req.body
             const now = new Date()
         
+            if(!title || !description){
+                return res.writeHead(400).end(
+                    JSON.stringify({message: "Validation error",
+                        fieldsRequired: {
+                            title: "required, must be a string",
+                            description: "required, must be a string"
+                        }
+                    })
+                )
+            }
+
             const newTask =  {
                 id: randomUUID(),
                 title, 
@@ -61,7 +72,6 @@ export const routes = [
             const [task] = database.select('tasks', {id})
 
             if(!task) return res.writeHead(404).end()
-
 
             const completed_at =  task.completed_at !== null ? null  : new Date()
             
