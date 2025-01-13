@@ -19,7 +19,7 @@ export const routes = [
         method: 'POST',
         path: buildRoutePath('/tasks'),
         handler: (req, res) => { 
-            const {title, description} = req.body
+            const {title, description} = req.body || {}
             const now = new Date()
         
             if(!title || !description){
@@ -45,6 +45,37 @@ export const routes = [
                 database.insert('tasks', newTask)
         
             return res.writeHead(201).end(JSON.stringify(newTask))
+        }
+    },
+    {
+        method: 'PUT',
+        path: buildRoutePath('/tasks/:id'),
+        handler: (req, res) => {
+            const {id} = req.params
+            const {title, description} = req.body || {}
+            const now = new Date()
+
+            const [task] = database.select('tasks', {id})
+
+            if (!task) {
+                return res.writeHead(404).end()
+            }
+        
+            if(!title && !description){
+                return res.writeHead(400).end(
+                    JSON.stringify({message: "Validation error, at least one is required, title or description",
+                    })
+                )
+            }
+
+
+            database.update('tasks', id, {
+                title: title ?? task.title,
+                description: description?? task.description,
+                updated_at: now
+            })
+
+            return res.writeHead(204).end()
         }
     },
     {
