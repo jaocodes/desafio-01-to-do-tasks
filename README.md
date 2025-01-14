@@ -4,8 +4,9 @@ Uma API para realizar o CRUD (Create, Read, Update, Delete) de tarefas (_tasks_)
 
 ## Tecnologias Utilizadas
 
-- **Node.js**: Runtime JavaScript para construção da API.
+- **Node.js**: Runtime JavaScript para construção da API. Utiliza bibliotecas nativas como `http`, `crypto` e `fs`
 - **csv-parse**: Biblioteca para parsing de arquivos CSV.
+- **biomejs**: Biblioteca para linting e padronização de formatação do código.
 
 ## Funcionalidades
 
@@ -26,6 +27,15 @@ Cada task contém as seguintes propriedades:
 - **`completed_at`**: Data de conclusão da task. Inicialmente `null`.
 - **`created_at`**: Data de criação da task.
 - **`updated_at`**: Data da última atualização da task.
+
+## Estrutura do Banco de Dados
+
+O projeto utiliza um banco de dados baseado em arquivo (`db.json`), onde os dados são armazenados e manipulados diretamente em um arquivo JSON. A classe `Database` implementa funcionalidades essenciais, como:
+
+- **Leitura e escrita persistente:** Os dados são lidos e gravados no arquivo `db.json` sempre que há uma alteração.
+- **Operações CRUD:** Métodos para seleção, inserção, atualização e exclusão de registros.
+- **Busca flexível:** Permite buscar registros utilizando filtros com base em propriedades específicas.
+  Essa abordagem simplifica a persistência de dados sem a necessidade de um banco de dados externo.
 
 ## Endpoints da API
 
@@ -115,7 +125,7 @@ Tarefa 05,Descrição da tarefa 05
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/task-api.git cd task-api
+   git clone https://github.com/jaocodes/desafio-01-to-do-tasks.git
    ```
 2. Instale as dependências:
    ```bash
