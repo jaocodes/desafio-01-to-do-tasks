@@ -4,7 +4,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch app/server.js"
+    "dev": "node --watch app/server.js",
+    "importer": "node app/csv-parse-request/import-csv.js "
   },
   "keywords": [],
   "author": "",
@@ -12,5 +13,8 @@
   "description": "",
   "dependencies": {
     "csv-parse": "^5.6.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }
