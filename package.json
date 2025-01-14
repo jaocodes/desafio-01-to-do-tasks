@@ -4,7 +4,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch app/server.js",
+    "start": "node --watch app/server.js",
     "importer": "node app/csv-parse-request/import-csv.js "
   },
   "keywords": [],
