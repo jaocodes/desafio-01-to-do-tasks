@@ -4,40 +4,36 @@
 // podemos iterar sobre cada chunk desse parse já que ele é um writable stream
 // em cada iteração será possível fazer um requisição chamando a rota de criação de task
 
-import { parse } from "csv-parse"
-import { createReadStream } from "node:fs"
-
+import { parse } from 'csv-parse'
+import { createReadStream } from 'node:fs'
 
 const csvPath = new URL('../../import.csv', import.meta.url)
 const apiUrl = 'http://localhost:3333/tasks'
 
 const readableStreamCSV = createReadStream(csvPath)
 
-
 async function importCSVToAPI() {
-const lines = []
+  const lines = []
 
-    const writableStreamParse = readableStreamCSV.pipe(parse({ delimiter: ',', columns: true}))
-    
+  const writableStreamParse = readableStreamCSV.pipe(
+    parse({ delimiter: ',', columns: true }),
+  )
 
-    for await(const line of writableStreamParse){
-        const {title, description} = line
+  for await (const line of writableStreamParse) {
+    const { title, description } = line
 
+    await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title, description }),
+    })
+  }
 
-        await fetch(apiUrl,{
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({title, description})
-        })
-
-    }
-
-    return lines
+  return lines
 }
 
 importCSVToAPI()
-
 
 // falta tratar erros
