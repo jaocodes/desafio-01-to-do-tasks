@@ -1,9 +1,3 @@
-// primeiro precisamos carregar o arquivo em uma readable stream
-// isso irá permitir passar essa stream de leitura para uma stream de escrita
-// a stream de escrita é o parse-csv que irá converter as linhas csv em objetos json
-// podemos iterar sobre cada chunk desse parse já que ele é um writable stream
-// em cada iteração será possível fazer um requisição chamando a rota de criação de task
-
 import { parse } from 'csv-parse'
 import { createReadStream } from 'node:fs'
 
@@ -13,7 +7,8 @@ const apiUrl = 'http://localhost:3333/tasks'
 const readableStreamCSV = createReadStream(csvPath)
 
 async function importCSVToAPI() {
-  const lines = []
+  let sucessCounter = 0
+  let errorCounter = 0
 
   const writableStreamParse = readableStreamCSV.pipe(
     parse({ delimiter: ',', columns: true }),
@@ -21,19 +16,37 @@ async function importCSVToAPI() {
 
   for await (const line of writableStreamParse) {
     const { title, description } = line
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, description }),
+      })
 
-    await fetch(apiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, description }),
-    })
+      if (response.status === 201) {
+        sucessCounter++
+        process.stdout.write(
+          `\r ✅ Sucessos: ${sucessCounter} | ❌ Erros: ${errorCounter}`,
+        )
+      } else {
+        errorCounter++
+        process.stdout.write(
+          `\r ✅ Sucessos: ${sucessCounter} | ❌ Erros: ${errorCounter}`,
+        )
+      }
+    } catch (error) {
+      errorCounter++
+      process.stdout.write(
+        `\r ✅ Sucessos: ${sucessCounter} | ❌ Erros: ${errorCounter}`,
+      )
+    }
   }
 
-  return lines
+  console.log(
+    `\n\nTotal: ${sucessCounter + errorCounter}, Sucessos: ${sucessCounter}, Erros: ${errorCounter}`,
+  )
 }
 
 importCSVToAPI()
-
-// falta tratar erros
